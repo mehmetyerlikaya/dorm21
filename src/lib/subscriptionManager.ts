@@ -167,8 +167,8 @@ class SubscriptionManager {
         // Unsubscribe from the captured channel
         channelToCleanup.unsubscribe()
 
-        // Only call removeChannel if the channel is still valid after unsubscribe
-        if (channelToCleanup) {
+        // Check if the channel is still valid after unsubscribe before calling removeChannel
+        if (channelToCleanup && typeof channelToCleanup.unsubscribe === 'function') {
           supabase.removeChannel(channelToCleanup)
         }
       } catch (error) {
