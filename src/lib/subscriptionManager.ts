@@ -160,12 +160,20 @@ class SubscriptionManager {
 
     if (this.channel) {
       try {
-        this.channel.unsubscribe()
-        supabase.removeChannel(this.channel)
+        // Capture the channel reference and immediately set this.channel to null
+        const channelToCleanup = this.channel
+        this.channel = null
+
+        // Unsubscribe from the captured channel
+        channelToCleanup.unsubscribe()
+
+        // Only call removeChannel if the channel is still valid after unsubscribe
+        if (channelToCleanup) {
+          supabase.removeChannel(channelToCleanup)
+        }
       } catch (error) {
         console.warn("⚠️ Error during channel cleanup:", error)
       }
-      this.channel = null
     }
 
     if (this.pollingInterval) {
